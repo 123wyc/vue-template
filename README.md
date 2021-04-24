@@ -35,3 +35,8 @@ vue create vue-template
 ## permission.js
 
 ## 前后分离：跨域和关于代理
+
+## 安装依赖的版本一致性问题
+```
+使用scss需要安装：node-sass 
+```
