@@ -21,6 +21,8 @@ vue create vue-template
     |--router 路由
     |--views  页面
     |--store  状态管理器
+    |--styles 公共样式
+    |--utils  工具js
 |--App.vue  主组件
 |--main.js 入口文件
 |--tests 测试文件
@@ -83,6 +85,20 @@ vue create vue-template
         const router = createRouter()
         export default router  //抛出路由
     注意：定义路由一定一套在创建路由对象之前，否则路由无法生效。这个问题花费了2天的事件才解决。
+
+## 关于如何使用element-ui
+    方式一：
+        在main.js中整体引入 
+        import Element from 'element-ui'
+        Vue.use(Element)
+    方式二：
+        1. 选择指定组件引入，项目中的 src/utils/Element.js
+        2.在main.js中进入   import './utils/Element.js'
+
+## Normalize.css
+    Normalize.css 是一个可以定制的CSS文件，它让不同的浏览器在渲染网页元素的时候形式更统一
+    安装npm install normalize.css
+
 ## 关于mock.js
 
 ## permission.js
