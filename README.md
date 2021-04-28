@@ -94,11 +94,15 @@ vue create vue-template
     方式二：
         1. 选择指定组件引入，项目中的 src/utils/Element.js
         2.在main.js中进入   import './utils/Element.js'
-
+    引入样式：
+        import 'element-ui/lib/theme-chalk/index.css'
 ## Normalize.css
     Normalize.css 是一个可以定制的CSS文件，它让不同的浏览器在渲染网页元素的时候形式更统一
     安装npm install normalize.css
 
+## 关于scss
+    Sass是成熟、稳定、强大的CSS预处理器。
+    npm install --save-dev node-sass sass-loader
 ## 关于mock.js
 
 ## permission.js
@@ -107,5 +111,6 @@ vue create vue-template
 
 ## 安装依赖的版本一致性问题
 ```
-使用scss需要安装：node-sass 
+使用scss需要安装：node-sass  sass-loader 需要注意版本问题
+
 ```

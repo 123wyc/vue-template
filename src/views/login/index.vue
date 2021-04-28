@@ -42,10 +42,10 @@
       </el-form-item>
 
       <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:30px;" @click.native.prevent="handleLogin">Login</el-button>
-      <div class="tips">
+      <!-- <div class="tips">
         <span style="margin-right:20px;">username: admin</span>
         <span> password: any</span>
-      </div> 
+      </div>  -->
     </el-form>
   </div>
 </template>
@@ -79,7 +79,24 @@ export default {
       this.$nextTick(() => {
         this.$refs.password.focus()
       })
-    },
+    },  
+    handleLogin() {
+      this.$refs.loginForm.validate(valid => {
+        if (valid) {
+          this.loading = true
+          /**this.$store.dispatch('user/login', this.loginForm).then(() => {
+            this.$router.push({ path: '/home', query: { name: 'zhy' }})
+            this.loading = false
+          }).catch(() => {
+            this.loading = false
+          })**/
+          this.$router.push({ path: 'home'})
+        } else {
+          console.log('error submit!!')
+          return false
+        }
+      })
+    } 
   }
   
 }
