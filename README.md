@@ -30,6 +30,59 @@ vue create vue-template
 |--	jest.config.js  测试模块的配置
 |--	package.json 项目的描述文件 
 ```
+
+## 关于路由配置
+    1.安装vue-router : npm install vue-router
+    2.在main.js中使用路由
+        import Vue from 'vue'
+        import App from './App.vue'
+        import router from './router'
+
+        Vue.config.productionTip = false
+
+        new Vue({
+        router,
+        render: h => h(App),
+        }).$mount('#app')
+
+    3.在主组件APP.vue中
+        <div id="app">
+            <router-view />
+        </div>
+        </template>
+
+        <script>
+        export default {
+        name: 'App',
+
+        }
+        </script>
+    4.在route.js或者router/index.js中定义路由
+
+        import Vue from 'vue'
+        import Router from 'vue-router'
+        Vue.use(Router)
+
+
+        //定义路由
+        const constantRoutes = [
+        {
+            path: '/',
+            name: 'login',
+            component: () => import('@/views/login/index'),
+            hidden: true
+        }
+
+        ]
+        //创建路由对象
+        const createRouter = () => new Router({
+        mode: 'history', // 去掉路径上的#
+        scrollBehavior: () => ({ y: 0 }),
+        routes: constantRoutes
+        })
+        const router = createRouter()
+        export default router  //抛出路由
+    注意：定义路由一定一套在创建路由对象之前，否则路由无法生效。这个问题花费了2天的事件才解决。
 ## 关于mock.js
 
 ## permission.js
