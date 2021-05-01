@@ -9,8 +9,8 @@ const constantRoutes = [
     name: 'login',
     component: () => import('@/views/login/index'),
     hidden: true
-  }
-
+  },
+ 
 ]
 const createRouter = () => new Router({
   mode: 'history', // require service support

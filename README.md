@@ -1,4 +1,6 @@
-# vue-template
+
+# vue-template 
+## 1.环境搭建
 简单的管理后台模板--vue
 >当前版本为v1
 ##项目创建方式
@@ -11,7 +13,7 @@ vue create vue-template
 选择vue 2.0版本，选择npm方式（yarn的方式不熟悉）
 4.创建完成
 ```
-## 创建出来的项目骨架介绍
+## 2.创建出来的项目骨架介绍
 ```
 |--node_modules 项目需要使用的依赖文件
 |--public 页面图标等
@@ -33,7 +35,7 @@ vue create vue-template
 |--	package.json 项目的描述文件 
 ```
 
-## 关于路由配置
+## 3.关于路由配置
     1.安装vue-router : npm install vue-router
     2.在main.js中使用路由
         import Vue from 'vue'
@@ -85,6 +87,46 @@ vue create vue-template
         const router = createRouter()
         export default router  //抛出路由
     注意：定义路由一定一套在创建路由对象之前，否则路由无法生效。这个问题花费了2天的事件才解决。
+
+# Main.vue
+```
+系统的主组件，它采用的布局是 element-ui的 Container 布局容器
+    <template>
+    <el-container style="height: 100%">
+        <!--左侧栏-->
+        <el-aside width="auto">
+            <!--左侧栏控件-->
+            <common-aside></common-aside>
+        </el-aside>
+        <!--右侧栏-->
+        <el-container>
+            <!--header部分-->
+            <el-header>
+                <!--header部分控件-->
+                <common-header></common-header>
+            </el-header>
+            <el-main>
+   <!--左侧栏 和 header部分对于整个后台部分都是不变的，唯一变的就是上面3的部分，这里就通过router-view来展示所需控件-->
+                <router-view/>
+            </el-main>
+        </el-container>
+    </el-container>
+</template>
+
+<script>
+    import CommonAside from '../components/CommonAside'
+    import CommonHeader from "../components/CommonHeader";
+
+    export default {
+        components: {
+            CommonAside,
+            CommonHeader
+        }
+    }
+</script>
+这样整个后台管理系统的整个轮廓就定下来了，接下来通过路由的切换的组件展示在router-view的位置。
+```
+    
 
 ## 关于如何使用element-ui
     方式一：

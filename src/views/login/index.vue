@@ -90,7 +90,7 @@ export default {
           }).catch(() => {
             this.loading = false
           })**/
-          this.$router.push({ path: 'home'})
+          this.$router.push({ path: '/Home'})
         } else {
           console.log('error submit!!')
           return false
