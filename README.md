@@ -331,6 +331,10 @@ export default {
 }
 用了一个属性为 currentMenu 的来存储当前菜单信息
 ```
+# 四、封装echarts 组件
+
+
+
 # 需要注意的点
 ## 1.关于如何使用element-ui
     方式一：
@@ -385,3 +389,5 @@ export default {
 
 ```
 ## 9.Vuex介绍
+
+## 10.请自行了解vue的生命周期函数
