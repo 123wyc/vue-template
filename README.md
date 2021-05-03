@@ -129,7 +129,208 @@ vue create vue-template
 </script>
 这样整个后台管理系统的整个轮廓就定下来了，接下来通过路由的切换的组件展示在router-view的位置。
 ```
-    
+# 左侧栏部分(CommonAside.vue)
+ ```
+ <template>
+  <!--collapse 是否水平折叠收起菜单-->
+  <el-menu
+    :collapse="isCollapse"
+    :default-active="$route.path"
+    class="el-menu-vertical-demo"
+    background-color="#545c64"
+    text-color="#fff"
+    active-text-color="#ffd04b"
+  >
+    <!--是否水平折叠收起菜单 会影响这里字段的显示 -->
+    <h3 v-show="isCollapse">偶囧</h3>
+    <h3 v-show="!isCollapse">偶囧后台管理系统</h3>
+    <el-menu-item :index="item.path" v-for="item in noChildren" :key="item.path" @click="clickMenu(item)">
+      <i :class="'el-icon-' + item.icon"></i>
+      <span slot="title">{{ item.label }}</span>
+    </el-menu-item>
+    <el-submenu :index="item.label" v-for="(item, index) in hasChildren" :key="index">
+      <template slot="title">
+        <i :class="'el-icon-' + item.icon"></i>
+        <span slot="title">{{ item.label }}</span>
+      </template>
+      <el-menu-item-group>
+        <el-menu-item :index="subItem.path" v-for="(subItem, subIndex) in item.children" :key="subIndex" @click="clickMenu(subItem)">
+          <i :class="'el-icon-' + subItem.icon"></i>
+          <span slot="title">{{ subItem.label }}</span>
+        </el-menu-item>
+      </el-menu-item-group>
+    </el-submenu>
+  </el-menu>
+</template>
+
+<script>
+export default {
+  //计算属性
+  computed: {
+    //没有子菜单
+    noChildren() {
+      return this.menu.filter(item => !item.children)
+    },
+    //有子菜单 (这样设置会有一个问题 就是有子菜单的 永远会在没有子菜单的下面）
+    hasChildren() {
+      return this.menu.filter(item => item.children)
+    },
+    isCollapse() {
+      // 这里的数据就是从vuex取得
+      return this.$store.state.tab.isCollapse
+    }
+  },
+  data() {
+    return {
+      menu: [
+        {
+          path: '/user',
+          name: 'user',
+          label: '用户管理',
+          icon: 'user',
+          url: 'UserManage/UserManage'
+        },
+        {
+          label: '其他',
+          icon: 'location',
+          children: [
+            {
+              path: '/page1',
+              name: 'page1',
+              label: '页面1',
+              icon: 'setting',
+              url: 'Other/PageOne'
+            },
+            {
+              path: '/page2',
+              name: 'page2',
+              label: '页面2',
+              icon: 'setting',
+              url: 'Other/PageTwo'
+            }
+          ]
+        }
+      ]
+    }
+  },
+  methods: {
+    //跳转路由 根据名称跳转
+    clickMenu(item) {
+      this.$router.push({ name: item.name })
+    }
+  }
+}
+</script>
+
+采用的布局是 element-ui的 NavMenu 导航菜单
+ ```    
+
+# header部分(CommonHeader.vue)
+```
+<template>
+    <header>
+        <div class="l-content">
+            <el-button plain icon="el-icon-menu" size="mini" @click="collapseMenu"></el-button>
+            <h3 style=" color : #fff">首页</h3>
+        </div>
+        <div class="r-content">
+            <el-dropdown trigger="click" size="mini">
+                <span class="el-dropdown-link"><img :src="userImg" class="user"/></span>
+                <el-dropdown-menu slot="dropdown">
+                    <el-dropdown-item>个人中心</el-dropdown-item>
+                    <el-dropdown-item @click.native="logOut">退出</el-dropdown-item>
+                </el-dropdown-menu>
+            </el-dropdown>
+        </div>
+    </header>
+</template>
+
+<script>
+    export default {
+        data() {
+            return {
+                userImg: require('../assets/images/user.png')
+            }
+        },
+        methods: {
+            //控制左侧菜单是否折叠
+            collapseMenu() {
+                this.$store.commit('collapseMenu')
+            },
+            //退出登陆
+            logOut() {
+                location.reload()
+            }
+        }
+    }
+</script>
+
+
+通过点击那个图标来控制：左侧栏是否水平折叠收起菜单
+它采用的布局是 element-ui的 Dropdown 下拉菜单
+```
+
+## 面包屑加tag标签切换功能
+```
+  面包屑是在head部分组件里,Tag标签虽然不再head部分组件里,但是它在整个管理后台系统中是会一直存在的，所以需要在Main.vue中.
+  这两块功能的实现,主要依赖Element-ui两个样式 Breadcrumb 面包屑 + Tag 标签
+
+  1.CommonAside侧边栏
+    侧边栏需要做的就是当click当前菜单 就要把这个数据存储到vuex中，为了头部组件来获取展示这份数据。
+     methods: {
+    //跳转路由 根据名称跳转
+    clickMenu(item) {
+      //调用vuex的selectMenu方法存储数据
+      this.$store.commit('selectMenu', item)
+      //跳转路由
+      this.$router.push({ name: item.name })
+    }
+  }
+  2.CommonHeader头部组件
+  面包屑写在CommonHeader中
+  <el-breadcrumb separator-class="el-icon-arrow-right">
+      <!--很明显 首页 一定是存在的 所以这里直接写死-->
+      <el-breadcrumb-item :to="{ path: '/main' }">首页</el-breadcrumb-item>
+      <!--第二级菜单名称 就要看左侧组件有没有点击指定菜单，没有那就只显示首页 点击就显示当前菜单名称-->
+      <el-breadcrumb-item :to="current.path" v-if="current" >{{current.label}}</el-breadcrumb-item>
+  </el-breadcrumb>
+  代替原先的：
+     <!-- <h3 style=" color : #fff">首页</h3> -->
+
+  3.vuex配置
+
+
+export default {
+
+  //存储数据
+  state: {
+    isCollapse: false,
+    currentMenu: null,
+ 
+  },
+  //调用方法
+  mutations: {
+    collapseMenu(state) {
+      state.isCollapse = !state.isCollapse
+    },
+    //选择标签 选择面包屑
+    selectMenu(state, val) {
+      if (val.name === 'home') {
+        state.currentMenu = null
+      } else {
+        state.currentMenu = val
+        //如果等于-1说明tabsList不存在那么插入，否则什么都不做
+        let result = state.tabsList.findIndex(item => item.name === val.name)
+        result === -1 ? state.tabsList.push(val) : ''
+
+      }
+      // val.name === 'home' ? (state.currentMenu = null) : (state.currentMenu = val)
+    },
+  },
+  actions: {}
+}
+用了一个属性为 currentMenu 的来存储当前菜单信息
+```
 
 ## 关于如何使用element-ui
     方式一：
@@ -149,6 +350,29 @@ vue create vue-template
     Sass是成熟、稳定、强大的CSS预处理器。
     npm install --save-dev node-sass sass-loader
 ## 关于mock.js
+```
+  在开发过程中，有很多的ajax请求，前后端分离开发你肯定遇到这样的问题，后台给你的接口文档，你需要在本地模拟数据返回。
+  学会使用mock.js拦截ajax请求，更加方便的构造你需要的假数据。
+
+  1.安装mock.js
+  npm install mockjs --save
+  2.在项目中创建mock.js
+   在src下创建mock文件夹，为不同的组件创建mock js文件，例如home.js,并引入mockjs：import Mock from 'mockjs'。
+   在mock下创建index.js,使用mock的js文件
+    import Mock from 'mockjs'
+    import homeApi from './home'
+
+      // 设置200-2000毫秒延时请求数据
+      // Mock.setup({
+      //   timeout: '200-2000'
+      // })
+
+      // 首页相关
+      // 拦截的是 /home/getData
+      Mock.mock(/\/home\/getData/, 'get', homeApi.getStatisticalData)
+   在main.js中引入创建好的mockjs文件：import './mock'   // mockjs
+```
+
 
 ## permission.js
 
@@ -159,3 +383,4 @@ vue create vue-template
 使用scss需要安装：node-sass  sass-loader 需要注意版本问题
 
 ```
+## Vuex介绍

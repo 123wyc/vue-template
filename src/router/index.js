@@ -4,13 +4,44 @@ Vue.use(Router)
 
 
 const constantRoutes = [
+  /* {
+     path: '/',
+     name: 'login',
+     component: () => import('@/views/login/index'),
+     hidden: true
+   },**/
   {
     path: '/',
-    name: 'login',
-    component: () => import('@/views/login/index'),
-    hidden: true
-  },
- 
+    component: () => import('@/views/Main'),
+    children: [
+      {
+        path: '/',
+        name: 'home',
+        component: () => import('@/views/Home/Home'),
+      },
+      {
+        path: '/user',
+        name: 'user',
+        component: () => import('@/views/UserManage/UserManage'),
+      },
+      {
+        path: '/mall',
+        name: 'mall',
+        component: () => import('@/views/MallManage/MallManage'),
+      },
+      {
+        path: '/page1',
+        name: 'page1',
+        component: () => import('@/views/Other/PageOne'),
+      },
+      {
+        path: '/page2',
+        name: 'page2',
+        component: () => import('@/views/Other/PageTwo'),
+      },
+    ]
+  }
+
 ]
 const createRouter = () => new Router({
   mode: 'history', // require service support
