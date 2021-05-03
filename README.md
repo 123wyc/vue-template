@@ -4,7 +4,7 @@
   简单的管理后台模板--vue
 当前版本为v1
  ```
-# 环境搭建
+# 一、环境搭建
 
 ## 1.项目创建方式
 ```
@@ -37,8 +37,8 @@ vue create vue-template
 |--	jest.config.js  测试模块的配置
 |--	package.json 项目的描述文件 
 ```
-
-## 3.关于路由配置
+# 二、首页
+## 1.关于路由配置
     1.安装vue-router : npm install vue-router
     2.在main.js中使用路由
         import Vue from 'vue'
@@ -91,7 +91,7 @@ vue create vue-template
         export default router  //抛出路由
     注意：定义路由一定一套在创建路由对象之前，否则路由无法生效。这个问题花费了2天的事件才解决。
 
-# Main.vue
+## 2.Main.vue
 ```
 系统的主组件，它采用的布局是 element-ui的 Container 布局容器
     <template>
@@ -129,7 +129,7 @@ vue create vue-template
 </script>
 这样整个后台管理系统的整个轮廓就定下来了，接下来通过路由的切换的组件展示在router-view的位置。
 ```
-# 左侧栏部分(CommonAside.vue)
+## 3.左侧栏部分(CommonAside.vue)
  ```
  <template>
   <!--collapse 是否水平折叠收起菜单-->
@@ -225,7 +225,7 @@ export default {
 采用的布局是 element-ui的 NavMenu 导航菜单
  ```    
 
-# header部分(CommonHeader.vue)
+## 4.header部分(CommonHeader.vue)
 ```
 <template>
     <header>
@@ -270,7 +270,7 @@ export default {
 它采用的布局是 element-ui的 Dropdown 下拉菜单
 ```
 
-## 面包屑加tag标签切换功能
+# 三、面包屑功能
 ```
   面包屑是在head部分组件里,Tag标签虽然不再head部分组件里,但是它在整个管理后台系统中是会一直存在的，所以需要在Main.vue中.
   这两块功能的实现,主要依赖Element-ui两个样式 Breadcrumb 面包屑 + Tag 标签
@@ -331,8 +331,8 @@ export default {
 }
 用了一个属性为 currentMenu 的来存储当前菜单信息
 ```
-
-## 关于如何使用element-ui
+# 需要注意的点
+## 1.关于如何使用element-ui
     方式一：
         在main.js中整体引入 
         import Element from 'element-ui'
@@ -342,23 +342,24 @@ export default {
         2.在main.js中进入   import './utils/Element.js'
     引入样式：
         import 'element-ui/lib/theme-chalk/index.css'
-## Normalize.css
+## 2.Normalize.css
     Normalize.css 是一个可以定制的CSS文件，它让不同的浏览器在渲染网页元素的时候形式更统一
     安装npm install normalize.css
 
-## 关于scss
+## 3.关于scss
     Sass是成熟、稳定、强大的CSS预处理器。
     npm install --save-dev node-sass sass-loader
-## 关于mock.js
+## 4.关于mock.js
 ```
   在开发过程中，有很多的ajax请求，前后端分离开发你肯定遇到这样的问题，后台给你的接口文档，你需要在本地模拟数据返回。
   学会使用mock.js拦截ajax请求，更加方便的构造你需要的假数据。
-
-  1.安装mock.js
+```
+## 5.安装mock.js
   npm install mockjs --save
-  2.在项目中创建mock.js
-   在src下创建mock文件夹，为不同的组件创建mock js文件，例如home.js,并引入mockjs：import Mock from 'mockjs'。
-   在mock下创建index.js,使用mock的js文件
+  ### 在项目中创建mock.js
+  ```
+   1.在src下创建mock文件夹，为不同的组件创建mock js文件，例如home.js,并引入mockjs：import Mock from 'mockjs'。
+   2.在mock下创建index.js,使用mock的js文件
     import Mock from 'mockjs'
     import homeApi from './home'
 
@@ -370,17 +371,17 @@ export default {
       // 首页相关
       // 拦截的是 /home/getData
       Mock.mock(/\/home\/getData/, 'get', homeApi.getStatisticalData)
-   在main.js中引入创建好的mockjs文件：import './mock'   // mockjs
+   3.在main.js中引入创建好的mockjs文件：import './mock'   // mockjs
 ```
 
 
-## permission.js
+## 6.permission.js
 
-## 前后分离：跨域和关于代理
+## 7.前后分离：跨域和关于代理
 
-## 安装依赖的版本一致性问题
+## 8.安装依赖的版本一致性问题
 ```
 使用scss需要安装：node-sass  sass-loader 需要注意版本问题
 
 ```
-## Vuex介绍
+## 9.Vuex介绍
