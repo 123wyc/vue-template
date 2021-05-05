@@ -690,8 +690,8 @@ export default {
     本地调试可以使用vue本身的config配置解决跨域，但正式环境推荐使用ngix
     
     vue.config中配置：
-        
-'use strict'
+ ```       
+use strict
 const path = require('path')
 module.exports = {
     dev: {
@@ -721,7 +721,7 @@ module.exports = {
     },
  
 }
-
+```
 ## 8.安装依赖的版本一致性问题
 ```
 使用scss需要安装：node-sass  sass-loader 需要注意版本问题
