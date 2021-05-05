@@ -333,8 +333,128 @@ export default {
 ```
 # 四、封装echarts 组件
 
+# 五、封装一个表格
+
+  CommonTable.vue 表格
+  CommonForm.vue 表单
+
+ # 六、权限管理
+  1、不同的用户会根据权限不同，在后台管理系统渲染不同的菜单栏。
+  2、用户登陆之后,会获取路由菜单和一个token,之后跳转的页面都需要带着token。
+  3、用户退出登陆,清除动态路由,清除token。跳转到login页面。
+  4、如果当前没有token，那么跳转到任何页面都应该重定向到login页面。
+
+  登陆操作应该至少要做三件事情
+  1、获取当前用户对应的菜单栏的菜单,并存储到vuex和cookies中。
+  2、获取当前用户的Token，存储到vuex和cookie中
+  3、获取当前的菜单生成动态路由。
 
 
+  header.vue退出时：
+      logOut() {
+      //清除token
+      this.$store.commit('clearToken')
+      //清除菜单
+      this.$store.commit('clearMenu')
+      //重定向 一般是登陆页
+      location.reload()
+    }
+
+  路由守卫：
+    后台管理系统,所以在我们在每切换一个路由都需要判断当前token是否存在,这个时候就需要通过路由守卫来实现。
+
+    router.beforeEach((to, from, next) => {
+      // 防止刷新后vuex里丢失token
+      store.commit('getToken')
+      // 防止刷新后vuex里丢失标签列表tagList
+      store.commit('getMenu')
+      let token = store.state.user.token
+      // 过滤登录页，因为去登陆页不需要token(防止死循环)
+      if (!token && to.name !== 'login') {
+        next({ name: 'login' })
+      } else {
+        next()
+      }
+    })  
+
+  vuex存放token
+  import Cookie from 'js-cookie'
+      export default {
+        state: {
+          token: ''
+        },
+        mutations: {
+          //存放token
+          setToken(state, val) {
+            state.token = val
+            Cookie.set('token', val)
+          },
+          //清空token
+          clearToken(state) {
+            state.token = ''
+            Cookie.remove('token')
+          },
+          //获取token
+          getToken(state) {
+            state.token = Cookie.get('token')
+          }
+        },
+        actions: {}
+      }
+
+  vuex存放菜单相关方法：
+
+    import Cookie from 'js-cookie'
+export default {
+  state: {
+    menu: []
+  },
+  mutations: {
+    setMenu(state, val) {
+      //vuex添加
+      state.menu = val
+      //cookie也添加
+      Cookie.set('menu', JSON.stringify(val))
+    },
+    clearMenu(state) {
+      //清除也一样 vuex和cookie都清除
+      state.menu = []
+      Cookie.remove('menu')
+    },
+    addMenu(state, router) {
+      if (!Cookie.get('menu')) {
+        return
+      }
+      //取出cookie数据 给vuex
+      let menu = JSON.parse(Cookie.get('menu'))
+      state.menu = menu
+      //添加动态路由 主路由为Main.vue
+      let currentMenu = [
+        {
+          path: '/',
+          component: () => import(`@/views/Main`),
+          children: []
+        }
+      ]
+      //如果是一级菜单 那么菜单名称肯定有路由 如果是二级菜单那么一级没有 二级有路由
+      menu.forEach(item => {
+        if (item.children) {
+          item.children = item.children.map(item => {
+            item.component = () => import(`@/views/${item.url}`)
+            return item
+          })
+          currentMenu[0].children.push(...item.children)
+        } else {
+          item.component = () => import(`@/views/${item.url}`)
+          currentMenu[0].children.push(item)
+        }
+      })
+      //添加动态路由
+      router.addRoutes(currentMenu)
+    }
+  },
+  actions: {}
+}
 # 需要注意的点
 ## 1.关于如何使用element-ui
     方式一：

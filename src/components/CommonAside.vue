@@ -45,64 +45,56 @@ export default {
     isCollapse() {
       // 这里的数据就是从vuex取得
       return this.$store.state.tab.isCollapse
+    },menu() {
+      return this.$store.state.tab.menu
     }
   },
-  data() {
+   data() {
     return {
-      menu: [
+      asideMenu: [
         {
           path: '/',
           name: 'home',
           label: '首页',
-          icon: 's-home',
-          url: 'Home/Home'
+          icon: 's-home'
         },
         {
-          path: '/mall',
-          name: 'mall',
+          path: '/video',
+          name: 'video',
           label: '商品管理',
-          icon: 'video-play',
-          url: 'MallManage/MallManage'
+          icon: 'video-play'
         },
         {
           path: '/user',
           name: 'user',
           label: '用户管理',
-          icon: 'user',
-          url: 'UserManage/UserManage'
+          icon: 'user'
         },
         {
           label: '其他',
-          icon: 'location',
+          icon: 'user',
           children: [
             {
               path: '/page1',
               name: 'page1',
               label: '页面1',
-              icon: 'setting',
-              url: 'Other/PageOne'
+              icon: 'setting'
             },
             {
               path: '/page2',
               name: 'page2',
               label: '页面2',
-              icon: 'setting',
-              url: 'Other/PageTwo'
+              icon: 'setting'
             }
           ]
         }
       ]
-
     }
   },
   methods: {
-    
- 
     clickMenu(item) {
-       //调用vuex的selectMenu方法存储数据
-      this.$store.commit('selectMenu', item)
-         //跳转路由 根据名称跳转
       this.$router.push({ name: item.name })
+      this.$store.commit('selectMenu', item)
     }
   }
 }

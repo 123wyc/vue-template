@@ -1,7 +1,7 @@
 <template>
     <el-row class="home" :gutter="20">
-    <el-col :span="8" style="margin-top: 20px">
-        <!--shadow属性设置卡片阴影出现的时机-->
+    <!-- <el-col :span="8" style="margin-top: 20px">
+        shadow属性设置卡片阴影出现的时机
         <el-card shadow='hover'>
             <div class="user">
                 <img :src="userImg"/>
@@ -15,14 +15,14 @@
                 <p>上次登录地点：<span>北京</span></p>
             </div>
         </el-card>
-        <el-card style="height: 460px ; margin-top: 20px">
+         <el-card style="height: 460px ; margin-top: 20px">
             <el-table :data="tableData">
                 <el-table-column show-overflow-tooltip v-for="(val, key) in tableLabel" :key="key" :prop="key"
                                  :label="val"></el-table-column>
             </el-table>
-        </el-card>
-    </el-col>
-        <el-col :span="16" style="margin-top: 20px">
+        </el-card> 
+    </el-col> -->
+        <el-col :span="24" style="margin-top: 20px">
             <div class="num">
                 <el-card shadow="hover" v-for="item in countData" :key="item.name" :body-style="{ display: 'flex', padding: 0}">
                     <i class="icon" :class="`el-icon-${item.icon}`" :style="{ background: item.color }"></i>

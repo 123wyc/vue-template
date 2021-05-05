@@ -14,7 +14,7 @@
             <el-dropdown trigger="click" size="mini">
                 <span class="el-dropdown-link"><img :src="userImg" class="user"/></span>
                 <el-dropdown-menu slot="dropdown">
-                    <el-dropdown-item>个人中心</el-dropdown-item>
+                    <!-- <el-dropdown-item>个人中心</el-dropdown-item> -->
                     <el-dropdown-item @click.native="logOut">退出</el-dropdown-item>
                 </el-dropdown-menu>
             </el-dropdown>
@@ -28,7 +28,8 @@
     export default {
         data() {
             return {
-                userImg: require('../assets/images/user.png')
+                userImg: require('../assets/images/user.png'),
+                lable:[]
             }
         },
         methods: {
@@ -38,6 +39,11 @@
             },
             //退出登陆
             logOut() {
+                    //清除token
+                this.$store.commit('clearToken')
+                //清除菜单
+                this.$store.commit('clearMenu')
+                //重定向 一般是登陆页
                 location.reload()
             }
         },
