@@ -332,10 +332,195 @@ export default {
 用了一个属性为 currentMenu 的来存储当前菜单信息
 ```
 # 四、封装echarts 组件
-
+    1.简单封装常用echarts图标
+       对于折线图、柱状图、饼状图等等做一个封装，首先需要找到哪些数据是需要我们传入组件中的。
+    2.主要参数和需要传入的参数
+        主要参数：
+            title : 标题
+            
+            tooltip : 提示框组件
+            
+            legend : 图例组件
+            
+            xAxis : 直角坐标轴中的 x 轴
+            
+            yAxis : 直角坐标轴中的 y 轴
+            
+            series : 系列列表。每个系列通过 type 决定自己的图表类型
+        需要传入的参数：
+            series 和 xAxis 是肯定需要外部传来的数据，y轴 的数据跟series中data相关不需要单独再传
+            x轴对于柱状图、折线图相关图是一定要有的，但对于饼状图来讲它又不是必须的，所以这里封装一个ECharts组件时,需要考虑这一点。
+            
+        3.封装
+            <template>
+              <!--图表展示在这个div中-->
+              <div style="height: 100%" ref="echart">
+                echart
+              </div>
+            </template>
+            
+            <script>
+            import echarts from 'echarts'
+            export default {
+              //接收父类两个数据 1、chartData (series数据 + x坐标系数据）2、isAxisChart （是否有x坐标系，如果false，那么上面的xData就为空）
+              props: {
+                chartData: {
+                  type: Object,
+                  default() {
+                    return {
+                      xData: [],
+                      series: []
+                    }
+                  }
+                },
+                isAxisChart: {
+                //默认type为true 就代表默认是有x轴的
+                  type: Boolean,
+                  default: true
+                }
+              },
+              computed: {
+                //计算 选择是有x轴 还是没有x轴的数据
+                options() {
+                  return this.isAxisChart ? this.axisOption : this.normalOption
+                },
+                //用于下面的resize 改变图表尺寸，在容器大小发生改变时需要手动调用
+                isCollapse() {
+                  return this.$store.state.tab.isCollapse
+                }
+              },
+              watch: {
+                //监听chartData数据
+                chartData: {
+                  handler: function() {
+                    this.initChart()
+                  },
+                  deep: true
+                },
+                //监听isCollapse 因为头部水平扩展是一个动画需要时间，所以这里延迟300毫秒
+                isCollapse() {
+                  setTimeout(() => {
+                    this.resizeChart()
+                  }, 300)
+                }
+              },
+              data() {
+                //在数据中有些数据在数据件中是写死的
+                return {
+                  echart: null,
+                  axisOption: {
+                    legend: {
+                      textStyle: {
+                        color: '#333'
+                      }
+                    },
+                    grid: {
+                      left: '20%'
+                    },
+                    tooltip: {
+                      trigger: 'axis'
+                    },
+                    xAxis: {
+                      type: 'category',
+                      data: [],
+                      axisLine: {
+                        lineStyle: {
+                          color: '#17b3a3'
+                        }
+                      },
+                      axisLabel: {
+                        color: '#333'
+                      }
+                    },
+                    yAxis: [
+                      {
+                        type: 'value',
+                        axisLine: {
+                          lineStyle: {
+                            color: '#17b3a3'
+                          }
+                        }
+                      }
+                    ],
+                    color: [
+                      '#2ec7c9',
+                      '#b6a2de',
+                      '#5ab1ef',
+                      '#ffb980',
+                      '#d87a80',
+                      '#8d98b3',
+                      '#e5cf0d',
+                      '#97b552',
+                      '#95706d',
+                      '#dc69aa',
+                      '#07a2a4',
+                      '#9a7fd1',
+                      '#588dd5'
+                    ],
+                    series: []
+                  },
+                  normalOption: {
+                    tooltip: {
+                      trigger: 'item'
+                    },
+                    color: ['#0f78f4', '#dd536b', '#9462e5', '#a6a6a6', '#e1bb22', '#39c362', '#3ed1cf'],
+                    series: []
+                  }
+                }
+              },
+              methods: {
+                initChart() {
+                  //获取处理好的数据
+                  this.initChartData()
+                  //获取echart对象
+                  if (this.echart) {
+                    this.echart.setOption(this.options)
+                  } else {
+                    //通过refs获取
+                    this.echart = echarts.init(this.$refs.echart)
+                    this.echart.setOption(this.options)
+                  }
+                },
+                //处理好数据
+                initChartData() {
+                  if (this.isAxisChart) {
+                    this.axisOption.xAxis.data = this.chartData.xData
+                    this.axisOption.series = this.chartData.series
+                  } else {
+                    this.normalOption.series = this.chartData.series
+                  }
+                },
+                resizeChart() {
+                  this.echart ? this.echart.resize() : ''
+                }
+              },
+              mounted() {
+                //resize 改变图表尺寸，在容器大小发生改变时需要手动调用（因为侧边栏是可以收缩的，所以这里图表根据是否收缩来改变图表尺寸）
+                window.addEventListener('resize', this.resizeChart)
+              },
+              //销毁 防止内存泄漏
+              destroyed() {
+                window.removeEventListener('resize', this.resizeChart)
+              }
+            }
+            </script>
+            
+            <style lang="scss" scoped></style>
+        4.核心：
+              //处理好数据
+                initChartData() {
+                  if (this.isAxisChart) {
+                    this.axisOption.xAxis.data = this.chartData.xData
+                    this.axisOption.series = this.chartData.series
+                  } else {
+                    this.normalOption.series = this.chartData.series
+                  }
+                },
+                   
 # 五、封装一个表格
 
   CommonTable.vue 表格
+  
   CommonForm.vue 表单
 
  # 六、权限管理
@@ -403,7 +588,6 @@ export default {
       }
 
   vuex存放菜单相关方法：
-
     import Cookie from 'js-cookie'
 export default {
   state: {
@@ -500,8 +684,43 @@ export default {
 
 
 ## 6.permission.js
-
+    由前端控制的路由权限
+    
 ## 7.前后分离：跨域和关于代理
+    本地调试可以使用vue本身的config配置解决跨域，但正式环境推荐使用ngix
+    
+    vue.config中配置：
+        
+'use strict'
+const path = require('path')
+module.exports = {
+    dev: {
+        // Paths
+        assetsSubDirectory: 'static',
+        assetsPublicPath: '/',
+        proxyTable: {
+            '/api': {
+                target: 'http://localhost:7001',//后端接口地址
+                changeOrigin: true,//是否允许跨越
+                pathRewrite: {
+                    '^/api': '/api',//重写,
+                }
+            }
+        },
+        host: '192.168.0.104',
+        port: 8081,
+        autoOpenBrowser: false,
+        errorOverlay: true,
+        notifyOnErrors: true,
+        poll: false,
+        useEslint: true,
+        showEslintErrorsInOverlay: false,
+        devtool: 'eval-source-map',
+        cacheBusting: true,
+        cssSourceMap: false,
+    },
+ 
+}
 
 ## 8.安装依赖的版本一致性问题
 ```
@@ -509,5 +728,10 @@ export default {
 
 ```
 ## 9.Vuex介绍
-
+    Vuex 是一个专为 Vue.js 应用程序开发的状态管理模式。
+    1.vuex用于做状态管理，主要是应用于vue.js中管理数据状态的一个库，即把项目中公用数据放到一个公用存储空间去存储，某一个组件改变这个公用数据，其他组件就能感知到。
+    2.vuex由统一的方法修改数据，全局变量可以任意修改
+    3.全局变量多了会造成命名污染，vuex不会，同时解决了父组件与孙组件，以及兄弟组件之间通信的问题。
+    
+    [中文介绍地址]（https://vuex.vuejs.org/zh/）
 ## 10.请自行了解vue的生命周期函数
