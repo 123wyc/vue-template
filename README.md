@@ -735,3 +735,58 @@ module.exports = {
     
     [中文介绍地址]（https://vuex.vuejs.org/zh/）
 ## 10.请自行了解vue的生命周期函数
+
+
+
+### 11.出现的问题：
+ ```
+  1.页面布局
+   main.vue中的页面布局由原来的左右 修改为现在的上下
+
+  last version：
+       <template> 
+        <el-container style="height: 100%">
+        <!--左侧栏-->
+        <el-aside width="auto">
+            <!--左侧栏控件-->
+            <common-aside></common-aside>
+        </el-aside>
+        <!--右侧栏-->
+        <el-container>
+            <!--header部分-->
+            <el-header>
+                <!--header部分控件-->
+                <common-header></common-header>
+            </el-header>
+            <el-main>
+                <!--左侧栏 和 header部分对于整个后台部分都是不变的，唯一变的就是上面3的部分，这里就通过router-view来展示所需控件-->
+                <router-view/>
+            </el-main>
+        </el-container>
+    </el-container>
+  </template>
+  now version:
+    <template>
+    <el-container >
+        <!--header部分-->
+        <el-header>
+            <!--header部分控件-->
+            <common-header></common-header>
+        </el-header>
+        <!--底部-->
+        <el-container>
+            <!--左侧栏-->
+            <el-aside width="auto">
+                <!--左侧栏控件-->
+                <common-aside></common-aside>
+            </el-aside>
+            <!-- 右侧主要内容部分 -->
+            <el-main>
+                <!--左侧栏 和 header部分对于整个后台部分都是不变的，唯一变的就是上面3的部分，这里就通过router-view来展示所需控件-->
+                <router-view/>
+            </el-main>
+        </el-container>
+    </el-container>
+</template>
+  
+ ```
